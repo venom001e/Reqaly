@@ -30,7 +30,7 @@ export default function RootLayout({
           className={`${poppins.className} antialiased`}
         >
           <QueryProvider>
-            <ThemeProvider attribute={"class"} defaultTheme="system" enableSystem>
+            <ThemeProvider attribute={"class"} defaultTheme="dark" enableSystem>
               <HotkeysProviders>
                 <Toaster />
                 {children}
