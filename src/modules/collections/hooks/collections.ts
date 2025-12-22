@@ -9,11 +9,16 @@ export function useCollections(workspaceId: string) {
 }
 
 
-export function useCreateCollection(workspaceId: string , name: string) {
+export function useCreateCollection(workspaceId: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (name: string) => createCollection(workspaceId, name),
+    mutationFn: async (name: string) => {
+      if (!workspaceId) {
+        throw new Error("Workspace ID is required");
+      }
+      return createCollection(workspaceId, name);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["collections", workspaceId] });
     },

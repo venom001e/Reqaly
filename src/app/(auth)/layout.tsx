@@ -1,14 +1,11 @@
-import { auth } from '@/lib/auth'
-import { headers } from 'next/headers'
+import { auth } from '@clerk/nextjs/server'
 import { redirect } from 'next/navigation'
 import React from 'react'
 
 const AuthLayout = async({children}: {children: React.ReactNode}) => {
-    const session = await auth.api.getSession({
-        headers:await headers()
-    })
+    const { userId } = await auth()
 
-    if(session){
+    if(userId){
         return redirect("/")
     }
 

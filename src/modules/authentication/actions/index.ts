@@ -1,22 +1,20 @@
 "use server";
 
+import { auth, currentUser as clerkCurrentUser } from "@clerk/nextjs/server";
 import db from "@/lib/db";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
 
 export const currentUser = async () => {
   try {
-    const session = await auth.api.getSession({
-      headers: await headers()
-    });
+    const { userId } = await auth();
 
-    if (!session?.user?.id) {
+    if (!userId) {
       return null;
     }
 
-    const user = await db.user.findUnique({
+    // Check if user exists in our database
+    let user = await db.user.findUnique({
       where: {
-        id: session.user.id
+        id: userId
       },
       select: {
         id: true,
@@ -27,6 +25,30 @@ export const currentUser = async () => {
         updatedAt: true,
       }
     });
+
+    // If user doesn't exist in our database, create them
+    if (!user) {
+      const clerkUser = await clerkCurrentUser();
+      if (clerkUser) {
+        user = await db.user.create({
+          data: {
+            id: userId,
+            email: clerkUser.emailAddresses[0]?.emailAddress || "",
+            name: clerkUser.fullName || clerkUser.firstName || "User",
+            image: clerkUser.imageUrl || null,
+            emailVerified: true,
+          },
+          select: {
+            id: true,
+            email: true,
+            name: true,
+            image: true,
+            createdAt: true,
+            updatedAt: true,
+          }
+        });
+      }
+    }
 
     return user;
   } catch (error) {

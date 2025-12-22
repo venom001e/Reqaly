@@ -17,10 +17,15 @@ const CreateCollection = ({
   setIsModalOpen: (open: boolean) => void;
 }) => {
   const [name, setName] = useState("");
-  const { mutateAsync, isPending } = useCreateCollection(workspaceId || "", name);
+  
+  // Only create the hook if we have a valid workspaceId
+  const { mutateAsync, isPending } = useCreateCollection(workspaceId || "");
 
   const handleSubmit = async () => {
-    if (!name.trim()) return;
+    if (!name.trim()) {
+      toast.error("Please enter a collection name");
+      return;
+    }
     if (!workspaceId) {
       toast.error("No workspace selected");
       return;

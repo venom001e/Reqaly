@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "sonner";
 import { QueryProvider } from "@/components/query-provider";
 import { HotkeysProviders } from "@/components/hot-key-provider";
+import { ClerkProvider } from '@clerk/nextjs'
 
 
 const poppins = Poppins({
@@ -23,21 +24,23 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body
-        className={`${poppins.className} antialiased`}
-      >
-        <QueryProvider>
-          <ThemeProvider attribute={"class"} defaultTheme="system" enableSystem>
-            <HotkeysProviders>
-              <Toaster />
-              {children}
-            </HotkeysProviders>
+    <ClerkProvider>
+      <html lang="en" suppressHydrationWarning>
+        <body
+          className={`${poppins.className} antialiased`}
+        >
+          <QueryProvider>
+            <ThemeProvider attribute={"class"} defaultTheme="system" enableSystem>
+              <HotkeysProviders>
+                <Toaster />
+                {children}
+              </HotkeysProviders>
 
-          </ThemeProvider>
-        </QueryProvider>
+            </ThemeProvider>
+          </QueryProvider>
 
-      </body>
-    </html>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }
