@@ -5,13 +5,16 @@ import { initializeWorkspace } from '@/modules/workspace/actions'
 import TabbedLeftPanel from '@/modules/workspace/components/tabbed-left-panel'
 import React from 'react'
 
+// Force dynamic rendering for authentication
+export const dynamic = 'force-dynamic'
+
 const RootLayout = async ({ children }: { children: React.ReactNode }) => {
   const workspace = await initializeWorkspace()
 
   const user = await currentUser()
   return (
     <>
-      {/* @ts-ignore */}
+      {/* @ts-expect-error */}
       <Header user={user!} workspace={workspace.workspace!} />
       <main className='max-h-[calc(100vh-4rem)] h-[calc(100vh-4rem)] flex flex-1 overflow-hidden'>
         <div className="flex h-full w-full">
